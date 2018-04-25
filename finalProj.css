@@ -1,0 +1,83 @@
+/*
+Name: Brock Berube
+css file for final porject
+*/
+
+h1{
+  font-size: 72pt;
+  float: left;
+}
+#welcomeText{
+  margin-left: 10px;
+  float: left;
+  padding-top: 10%;
+}
+
+#welcomeBlock{
+  clear: right;
+  float: left;
+  clear: both;
+  min-width: 90%;
+}
+
+
+#block1{
+  margin-left: 60px;
+  float: left;
+  width: 60%;
+  clear: right;
+
+}
+#block3{
+  background-color: green;
+
+}
+
+
+
+#userNameBlock{
+  font-size: 20pt;
+  font-weight: bold;
+  float: left;
+  background-color: #609dff;
+  padding: 20px;
+  width: 60%;
+
+}
+#passwordBlock{
+  font-size: 20pt;
+  font-weight: bold;
+  float: left;
+  background-color: #609dff;
+  padding: 20px;
+  width: 60%;
+
+}
+
+#signUpBox{
+  background-color: #609dff;
+  width:20%;
+  padding: 30px;
+  margin-right: 60px;
+  float: right;
+  clear: right;
+  border-color: #ffcc60;
+  text-align: center;
+}
+#loginBox{
+  background-color: #609dff;
+  width:20%;
+  padding: 30px;
+  margin-right: 60px;
+  float: right;
+  border-color: #ffcc60;
+  text-align: center;
+}
+
+
+body{
+  font-family: Helvetica ,Arial , sans-serif;
+  font-size: 18pt;
+  background-color: #ffcc60;
+
+}
