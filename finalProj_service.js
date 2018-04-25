@@ -93,15 +93,10 @@ app.post('/', jsonParser, function(req, res) {
   }
 })
 
-
 console.log('web service started');
-
-
 app.get('/', function(req, res) {
   res.header("Access-Control-Allow-Origin", "*");
-
   res.send("work in progress");
-
 })
 
 app.listen(3000);
