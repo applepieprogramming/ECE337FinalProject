@@ -24,16 +24,23 @@ h1{
 #block1{
   margin-left: 60px;
   float: left;
-  width: 60%;
-  clear: right;
-
+  width: 50%;
+  overflow: auto;
 }
+
+#block2{
+  float: right;
+  background-color: #609dff;
+  width:20%;
+  padding: 20px;
+  margin-right: 60px;
+  border-color: #ffcc60;
+  text-align: center;
+}
+
 #block3{
   background-color: green;
-
 }
-
-
 
 #userNameBlock{
   font-size: 20pt;
@@ -41,43 +48,68 @@ h1{
   float: left;
   background-color: #609dff;
   padding: 20px;
-  width: 60%;
-
+  width: 90%;
 }
+
 #passwordBlock{
   font-size: 20pt;
   font-weight: bold;
   float: left;
   background-color: #609dff;
   padding: 20px;
-  width: 60%;
-
+  width: 90%;
 }
 
-#signUpBox{
-  background-color: #609dff;
-  width:20%;
-  padding: 30px;
-  margin-right: 60px;
-  float: right;
-  clear: right;
-  border-color: #ffcc60;
-  text-align: center;
+#signUpBox {
+  padding: 20px;
 }
-#loginBox{
-  background-color: #609dff;
-  width:20%;
-  padding: 30px;
-  margin-right: 60px;
-  float: right;
-  border-color: #ffcc60;
-  text-align: center;
-}
-
 
 body{
   font-family: Helvetica ,Arial , sans-serif;
   font-size: 18pt;
   background-color: #ffcc60;
+}
 
+#allMusic {
+  margin: auto;
+  text-align: center;
+  border-radius: 20px;
+  background: #e6bbad;
+  float: left;
+  width: 45%;
+  padding: 10px;
+}
+
+#yourMusic {
+  float: right;
+  text-align: center;
+  padding: 10px;
+  border-radius: 20px;
+  background: #e6bbad;
+  width: 45%
+}
+
+#topBar {
+  padding: 10px;
+  padding-left: 40px;
+  width: 110%;
+  margin-left: -40px;
+  margin-bottom: 20px;
+  margin-top: -10px;
+  border-radius: 20px;
+  background: black;
+}
+
+#topBar {
+  clear: both;
+}
+
+#main {
+  overflow: hidden;
+}
+button {
+  height: 30px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: bold;
 }
