@@ -73,9 +73,7 @@ app.post('/', jsonParser, function(req, res) {
 
         }
         if (password == tempArray[1]) {
-
           pwCheck = 1;
-
         }
       }
 
