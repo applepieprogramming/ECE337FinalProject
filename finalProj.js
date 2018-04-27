@@ -11,6 +11,9 @@
     } else {
       var homeButton = document.getElementById("home");
       homeButton.onclick = home;
+      var searchButton = document.getElementById("searchButton");
+      searchButton.onclick = populateMusicList;
+      populateMusicList();
     }
   };
 
@@ -90,6 +93,99 @@
   function loadService(user) {
     window.location.href = './music.html';
   }
+
+  function populateMusicList(){
+
+    var url1 = 'http://localhost:3000/' ;//"http://localhost:3000/";
+    fetch(url1)
+      .then(checkStatus)
+      .then(function(responseText) {
+        console.log("Response Text:     " + responseText);
+        var json = JSON.parse(responseText);
+        //console.log(json);
+        //console.log("JSON:     " + json);
+        addDataToAllMusic(json);
+
+      })
+      .catch(function(error) {
+
+        //error: do something with error
+        console.log(error);
+
+      });
+
+
+
+  }
+
+  function addDataToAllMusic(responseText){
+
+    console.log("Length" + responseText.length);
+    //console.log(responseText);
+
+    var titleInput = document.getElementById("titleInput").value;
+    var artistInput = document.getElementById("artistInput").value;
+    var yearInput = document.getElementById("yearInput").value;
+
+    document.getElementById("allSongs").innerHTML = '';
+
+    console.log(titleInput + artistInput + yearInput );
+
+    for(var i = 0; i < responseText.length; i++){
+
+        //console.log(responseText[i].title);
+        var newBlock = document.createElement('div');
+        console.log(responseText[i].artist);
+        newBlock.artist = responseText[i].artist;
+        newBlock.title = responseText[i].title;
+        newBlock.year = responseText[i].year;
+
+        //text nodes
+        var artist = document.createTextNode("Artist: " + responseText[i].artist  + '\n');
+        var title = document.createTextNode("Title: " + responseText[i].title + '\n');
+        var year = document.createTextNode("Year: " + responseText[i].year + '\n');
+
+        newBlock.addEventListener("mouseover", hiLight);
+        newBlock.addEventListener("mouseleave", turnBlack);
+
+        //add elements to the array
+        newBlock.appendChild(artist);
+        newBlock.appendChild(title);
+        newBlock.appendChild(year);
+
+
+
+        if(artistInput.toLowerCase() == responseText[i].artist.toLowerCase() || artistInput.toLowerCase() == '' ){
+          if(titleInput.toLowerCase() == responseText[i].title.toLowerCase() || titleInput.toLowerCase() == '' ){
+            if(yearInput.toLowerCase() == responseText[i].year.toLowerCase() || yearInput.toLowerCase() == '' ){
+              document.getElementById("allSongs").appendChild(newBlock);
+            }
+          }
+        }
+
+
+      }//end for loop
+
+
+
+
+
+
+  }
+
+  function turnBlack(){
+    this.style.backgroundColor = '#609dff';
+    this.style.cursor = 'default';
+  }
+
+  function hiLight(){
+
+    this.style.backgroundColor = 'red';
+    this.style.cursor = 'pointer';
+
+  }
+
+
   // returns the response text if the status is in the 200s
   // otherwise rejects the promise with a message including the status
   function checkStatus(response) {

@@ -1,19 +1,14 @@
 const express = require("express");
 const fs = require("fs");
-const app = express();
-
 const MongoClient = require("mongodb");
 const MONGO_URL = 'mongodb://localhost:27017/';
+const app = express();
+
+
 
 app.use(express.static('public'));
 
-//database shiz
-var db = null;
-var collection = null;
-MongoClient.connect(MONGO_URL, function(err, client) {
-  db = client.db('SongLib');
-  collection = db.collection('songs');
-});
+
 
 // so that we can run on the localhost without errors
 app.use(function(req, res, next) {
@@ -91,10 +86,44 @@ app.post('/', jsonParser, function(req, res) {
   }
 })
 
-console.log('web service started');
-app.get('/', function(req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.send("work in progress");
+
+app.get('/', function (req, res) {
+	res.header("Access-Control-Allow-Origin", "*");
+
+	// connect to the movies collection in the imdb database
+	var db = null;
+	var collection = null;
+
+
+	MongoClient.connect(MONGO_URL, function(err, client) {
+      dbo = client.db('SongLib');
+      collection = dbo.collection('songs');
+      dbo.collection("songs").find({}).toArray(function(err, result) {
+        if (err) throw err;
+        console.log(result);
+        res.send(result);
+
+        //db.close();
+      });
+	    //query(2012,'1904',"The Tallest Man on Earth" ,collection);
+      //query(collection);
+      //result = collection.find();
+	});
+
+	//res.send("message sent");
+
+  //res.send(result);
 })
+
+// takes a year to search for and a collection to search through as parameters
+// logs the liset of all of the movies made in that year or the one
+// after that do not have the genre of animation
+
+//async function query(year, title, artist, collection) {
+function query(collection) {
+    //const doc = { "year" : {year}, "title": {title}, 'artist': {artist}};
+    var result = collection.find();//.toArray();
+    console.log("Result:   " +result);
+}
 
 app.listen(3000);

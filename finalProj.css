@@ -107,6 +107,16 @@ body{
 #main {
   overflow: hidden;
 }
+#tempBlock{
+  float: right;
+}
+#allSongs div{
+
+  background-color: #609dff;
+  border-color: black;
+  border-radius: 5px;
+
+}
 button {
   height: 30px;
   border-radius: 20px;
