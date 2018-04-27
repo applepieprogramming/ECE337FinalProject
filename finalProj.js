@@ -147,6 +147,8 @@
 
         newBlock.addEventListener("mouseover", hiLight);
         newBlock.addEventListener("mouseleave", turnBlack);
+        newBlock.addEventListener("click", addToLibrary);//function to add songs to user library
+
 
         //add elements to the array
         newBlock.appendChild(artist);
@@ -185,6 +187,42 @@
 
   }
 
+  function addToLibrary(){
+
+    //alert('in progress');
+
+    var newBlock = document.createElement('div');
+    newBlock.artist = this.artist;
+    newBlock.title = this.title;
+    newBlock.year = this.year;
+
+    //text nodes
+    var artist = document.createTextNode("Artist: " + this.artist  + '\n');
+    var title = document.createTextNode("Title: " + this.title + '\n');
+    var year = document.createTextNode("Year: " + this.year + '\n');
+
+    newBlock.addEventListener("mouseover", hiLight);
+    newBlock.addEventListener("mouseleave", turnBlack);
+    newBlock.addEventListener("click", removeFromLibrary);//function to remove songs to user library
+
+
+    //add elements to the array
+    newBlock.appendChild(artist);
+    newBlock.appendChild(title);
+    newBlock.appendChild(year);
+
+    document.getElementById("userSongs").appendChild(newBlock);
+
+    //write this data to a text file here --- FIXME
+
+
+  }
+
+  function removeFromLibrary(){
+    //alert("Removing songs is still in progress");
+    this.innerHTML = '';
+    //remove songs from file here --- FIXME
+  }
 
   // returns the response text if the status is in the 200s
   // otherwise rejects the promise with a message including the status
