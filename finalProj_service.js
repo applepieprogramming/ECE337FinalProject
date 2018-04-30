@@ -1,10 +1,17 @@
+// Corey Miner and Brock Berube
+// CSC 337, Spring 2018
+// Final Project
+
+//this code hosts a node server that talks to finalProj.js and the song dB
+//it saves data to files when need.
+//To run, first mongod must be running in a different terminal,
+//then cd into where this file is and type node finalProj_service.js
+
 const express = require("express");
 const fs = require("fs");
 const MongoClient = require("mongodb");
 const MONGO_URL = 'mongodb://localhost:27017/';
 const app = express();
-
-
 
 app.use(express.static('public'));
 
@@ -24,12 +31,16 @@ app.use(function(req, res, next) {
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
 
+// post requests for both web pages
 app.post('/', jsonParser, function(req, res) {
   var mode = req.body.mode;
+  //load current music of user
   if (mode == 'yourMusic') {
+    //make sure a user is logged on
     if (curUserName == '') {
       res.send("Notlogin");
     }
+    //read the file and select all songs saved by the current user
     var data = fs.readFileSync('userMusic.txt', 'utf8');
     var dataByLine = data.split("\n");
     var returnData = []
@@ -39,11 +50,14 @@ app.post('/', jsonParser, function(req, res) {
         returnData.push(line);
       }
     });
+    // send all songs to the js page for this user
     res.send(returnData);
-  } else if (mode == 'removeSong') {
+  } else if (mode == 'removeSong') { //remove a song that has been selected
+    //check that a user is logged on
     if (curUserName == '') {
       res.send("Notlogin");
     } else {
+      //find the song in the file, and rewrite the file without this line
       var artist = req.body.artist;
       var title = req.body.title;
       var year = req.body.year;
@@ -52,7 +66,6 @@ app.post('/', jsonParser, function(req, res) {
       var data = fs.readFileSync('userMusic.txt', 'utf8');
       fs.writeFile("userMusic.txt", '', function(err) {
         if (err) {
-          //res.send(err.message);
           return console.log(err);
         }
       });
@@ -61,14 +74,13 @@ app.post('/', jsonParser, function(req, res) {
         if (line != text) {
           fs.appendFile("userMusic.txt", line + '\n', function(err) {
             if (err) {
-              //res.send(err.message);
               return console.log(err);
             }
           });
         }
       });
     }
-  } else if (mode == 'writeMusic')  {
+  } else if (mode == 'writeMusic')  { //write songs to file.
     if (curUserName == '') {
       res.send("Notlogin");
     } else {
@@ -78,6 +90,7 @@ app.post('/', jsonParser, function(req, res) {
       text = curUserName.toLowerCase() + ":" + artist + ":" + title + ":" + year;
       var data = fs.readFileSync('userMusic.txt', 'utf8');
       var dataByLine = data.split("\n");
+      //makes sure only one of each song is saved to the databse
       var isNew = true;
       dataByLine.forEach(function(line) {
         if (line == text) {
@@ -95,11 +108,12 @@ app.post('/', jsonParser, function(req, res) {
     }
   }
   else{
+    //log in post requests
     var name = req.body.name;
     var password = req.body.password;
     var firstUser = 1;
     var pwCheck = 0;
-
+    //make sure username and password is typed in
     if (name == '' || password == '') {
       res.send("Blank username of password try again");
     } else {
@@ -115,7 +129,6 @@ app.post('/', jsonParser, function(req, res) {
         if (firstUser) {
           fs.appendFile("users.txt", name.toLowerCase() + ':::' + password + '\n', function(err) {
             if (err) {
-              //res.send(err.message);
               return console.log(err);
             }
           });
