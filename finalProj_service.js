@@ -9,6 +9,8 @@ const app = express();
 app.use(express.static('public'));
 
 
+var curUserName = ''
+
 
 // so that we can run on the localhost without errors
 app.use(function(req, res, next) {
@@ -23,64 +25,135 @@ const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
 
 app.post('/', jsonParser, function(req, res) {
-  var name = req.body.name;
-  var password = req.body.password;
   var mode = req.body.mode;
-  var firstUser = 1;
-  var pwCheck = 0;
-  if (name == '' || password == '') {
-    res.send("Blank username of password try again");
-  } else {
-    if (mode == 'signUp') { //-----------------------------------------sign up
-      var data = fs.readFileSync('users.txt', 'utf8');
-      var dataByLine = data.split("\n");
-      for (var i = 0; i < dataByLine.length - 1; i++) {
-        var tempArray = dataByLine[i].split(":::");
-        //console.log("User Input" + name.toLowerCase() + "File data: "+ tempArray[0].toLowerCase());
-        if (name.toLowerCase() == tempArray[0].toLowerCase()) {
-          firstUser = 0; //not the first person with this user name
-        }
+  if (mode == 'yourMusic') {
+    if (curUserName == '') {
+      res.send("Notlogin");
+    }
+    var data = fs.readFileSync('userMusic.txt', 'utf8');
+    var dataByLine = data.split("\n");
+    var returnData = []
+    dataByLine.forEach(function(line) {
+      line = line.split(":");
+      if (line[0] == curUserName) {
+        returnData.push(line);
       }
-      if (firstUser) {
-        fs.appendFile("users.txt", name.toLowerCase() + ':::' + password + '\n', function(err) {
+    });
+    res.send(returnData);
+  } else if (mode == 'removeSong') {
+    if (curUserName == '') {
+      res.send("Notlogin");
+    } else {
+      var artist = req.body.artist;
+      var title = req.body.title;
+      var year = req.body.year;
+      text = curUserName.toLowerCase() + ":" + artist + ":" + title + ":" + year;
+      writeData = []
+      var data = fs.readFileSync('userMusic.txt', 'utf8');
+      fs.writeFile("userMusic.txt", '', function(err) {
+        if (err) {
+          //res.send(err.message);
+          return console.log(err);
+        }
+      });
+      var dataByLine = data.split("\n");
+      dataByLine.forEach(function(line) {
+        if (line != text) {
+          fs.appendFile("userMusic.txt", line + '\n', function(err) {
+            if (err) {
+              //res.send(err.message);
+              return console.log(err);
+            }
+          });
+        }
+      });
+    }
+  } else if (mode == 'writeMusic')  {
+    if (curUserName == '') {
+      res.send("Notlogin");
+    } else {
+      var artist = req.body.artist;
+      var title = req.body.title;
+      var year = req.body.year;
+      text = curUserName.toLowerCase() + ":" + artist + ":" + title + ":" + year;
+      var data = fs.readFileSync('userMusic.txt', 'utf8');
+      var dataByLine = data.split("\n");
+      var isNew = true;
+      dataByLine.forEach(function(line) {
+        if (line == text) {
+          isNew = false;
+        }
+      });
+      if (isNew) {
+        fs.appendFile("userMusic.txt", text + '\n', function(err) {
           if (err) {
             //res.send(err.message);
             return console.log(err);
           }
         });
-        res.send("Thank you " + name + " for signing up\n PW: " + password);
-      } else {
-        res.send("Sorry " + name + ", but that user name already exists, try another one.")
       }
-    } else if (mode == 'login') { //-------------------------------------------------login
+    }
+  }
+  else{
+    var name = req.body.name;
+    var password = req.body.password;
+    var firstUser = 1;
+    var pwCheck = 0;
 
-      var data = fs.readFileSync('users.txt', 'utf8');
-      //console.log(data);
-      var dataByLine = data.split("\n");
-
-      for (var i = 0; i < dataByLine.length - 1; i++) {
-
-        var tempArray = dataByLine[i].split(":::");
-        //console.log("User Input" + name.toLowerCase() + "File data: "+ tempArray[0].toLowerCase());
-        if (name.toLowerCase() == tempArray[0].toLowerCase()) {
-
-          firstUser = 0; //not the first person with this user name
-
+    if (name == '' || password == '') {
+      res.send("Blank username of password try again");
+    } else {
+      if (mode == 'signUp') { //-----------------------------------------sign up
+        var data = fs.readFileSync('users.txt', 'utf8');
+        var dataByLine = data.split("\n");
+        for (var i = 0; i < dataByLine.length - 1; i++) {
+          var tempArray = dataByLine[i].split(":::");
+          if (name.toLowerCase() == tempArray[0].toLowerCase()) {
+            firstUser = 0; //not the first person with this user name
+          }
         }
-        if (password == tempArray[1]) {
-          pwCheck = 1;
-        }
-      }
-
-      if (firstUser == 0) {
-        if (pwCheck == 1) {
-          res.send("Welcome back " + name + "\n PW: " + password);
+        if (firstUser) {
+          fs.appendFile("users.txt", name.toLowerCase() + ':::' + password + '\n', function(err) {
+            if (err) {
+              //res.send(err.message);
+              return console.log(err);
+            }
+          });
+          curUserName = name;
+          res.send("Thank you " + name + " for signing up\n PW: " + password);
         } else {
-          res.send("Invalid Password");
+          res.send("Sorry " + name + ", but that user name already exists, try another one.")
+        }
+      } else if (mode == 'login') { //-------------------------------------------------login
+
+        var data = fs.readFileSync('users.txt', 'utf8');
+        var dataByLine = data.split("\n");
+
+        for (var i = 0; i < dataByLine.length - 1; i++) {
+
+          var tempArray = dataByLine[i].split(":::");
+          if (name.toLowerCase() == tempArray[0].toLowerCase()) {
+
+            firstUser = 0; //not the first person with this user name
+
+          }
+          if (password == tempArray[1]) {
+            pwCheck = 1;
+          }
         }
 
-      } else {
-        res.send("Sorry " + name + ", but we dont have your information, perhaps try signing up.")
+        if (firstUser == 0) {
+          if (pwCheck == 1) {
+            curUserName = name;
+            res.send("Welcome back " + name + "\n PW: " + password);
+
+          } else {
+            res.send("Invalid Password");
+          }
+
+        } else {
+          res.send("Sorry " + name + ", but we dont have your information, perhaps try signing up.")
+        }
       }
     }
   }
@@ -100,19 +173,9 @@ app.get('/', function (req, res) {
       collection = dbo.collection('songs');
       dbo.collection("songs").find({}).toArray(function(err, result) {
         if (err) throw err;
-        console.log(result);
         res.send(result);
-
-        //db.close();
       });
-	    //query(2012,'1904',"The Tallest Man on Earth" ,collection);
-      //query(collection);
-      //result = collection.find();
 	});
-
-	//res.send("message sent");
-
-  //res.send(result);
 })
 
 // takes a year to search for and a collection to search through as parameters
@@ -121,9 +184,7 @@ app.get('/', function (req, res) {
 
 //async function query(year, title, artist, collection) {
 function query(collection) {
-    //const doc = { "year" : {year}, "title": {title}, 'artist': {artist}};
-    var result = collection.find();//.toArray();
-    console.log("Result:   " +result);
+    var result = collection.find();
 }
 
 app.listen(3000);

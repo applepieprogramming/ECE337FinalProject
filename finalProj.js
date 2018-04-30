@@ -14,6 +14,7 @@
       var searchButton = document.getElementById("searchButton");
       searchButton.onclick = populateMusicList;
       populateMusicList();
+      populateYourMusic();
     }
   };
 
@@ -44,7 +45,7 @@
         document.getElementById("debug").innerHTML = responseText;
         //if user doesnt exist redirect to other service
         if (responseText[0] == 'T') {
-          loadService(user);
+          loadService();
         } else {
           //else stay here
         }
@@ -79,7 +80,7 @@
 
         //if user doesnt exist redirect to other service
         if (responseText[0] == 'W') {
-          loadService(user);
+          loadService();
         } else {
           //else stay here
         }
@@ -90,7 +91,7 @@
       });
   }
 
-  function loadService(user) {
+  function loadService() {
     window.location.href = './music.html';
   }
 
@@ -100,7 +101,7 @@
     fetch(url1)
       .then(checkStatus)
       .then(function(responseText) {
-        console.log("Response Text:     " + responseText);
+        //console.log("Response Text:     " + responseText);
         var json = JSON.parse(responseText);
         //console.log(json);
         //console.log("JSON:     " + json);
@@ -120,7 +121,7 @@
 
   function addDataToAllMusic(responseText){
 
-    console.log("Length" + responseText.length);
+    //console.log("Length" + responseText.length);
     //console.log(responseText);
 
     var titleInput = document.getElementById("titleInput").value;
@@ -129,17 +130,16 @@
 
     document.getElementById("allSongs").innerHTML = '';
 
-    console.log(titleInput + artistInput + yearInput );
+    //console.log(titleInput + artistInput + yearInput );
 
     for(var i = 0; i < responseText.length; i++){
 
         //console.log(responseText[i].title);
         var newBlock = document.createElement('div');
-        console.log(responseText[i].artist);
+        //console.log(responseText[i].artist);
         newBlock.artist = responseText[i].artist;
         newBlock.title = responseText[i].title;
         newBlock.year = responseText[i].year;
-
         //text nodes
         var artist = document.createTextNode("Artist: " + responseText[i].artist  + '\n');
         var title = document.createTextNode("Title: " + responseText[i].title + '\n');
@@ -195,7 +195,7 @@
     newBlock.artist = this.artist;
     newBlock.title = this.title;
     newBlock.year = this.year;
-
+    newBlock.style.backgroundColor = '#609dff'
     //text nodes
     var artist = document.createTextNode("Artist: " + this.artist  + '\n');
     var title = document.createTextNode("Title: " + this.title + '\n');
@@ -212,17 +212,126 @@
     newBlock.appendChild(year);
 
     document.getElementById("userSongs").appendChild(newBlock);
-
-    //write this data to a text file here --- FIXME
-
-
+    updateLibrary()
   }
 
-  function removeFromLibrary(){
-    //alert("Removing songs is still in progress");
-    this.innerHTML = '';
-    //remove songs from file here --- FIXME
-  }
+function updateLibrary() {
+  //write this data to a text file here ---
+  var songList = document.getElementById("userSongs").innerHTML;
+  songList = songList.split(">");
+  songList.forEach(function(song){
+    if (song[0] == 'A') {
+      song = song.split("\n");
+      song = song.slice(0, 3);
+      var user = {};
+      user["artist"] = song[0].split(": ")[1];
+      user["title"] = song[1].split(": ")[1];
+      user["year"] = song[2].split(": ")[1];
+      user["mode"] = 'writeMusic';
+      var fetchOptions = {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+      };
+      var url = "http://localhost:3000";
+      fetch(url, fetchOptions)
+        .then(checkStatus)
+        .then(function(responseText) {
+          if (responseText == "Notlogin") {
+            window.location.href = './index.html';
+          }
+          console.log(responseText);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
+  });
+
+}
+
+function populateYourMusic() {
+  var user = {};
+  user["mode"] = 'yourMusic';
+  var fetchOptions = {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(user)
+  };
+  var url = "http://localhost:3000";
+  fetch(url, fetchOptions)
+    .then(checkStatus)
+    .then(function(responseText) {
+      if (responseText == "Notlogin") {
+        window.location.href = './index.html';
+      }
+      console.log(responseText);
+      var songList = JSON.parse(responseText);
+      console.log(songList);
+      songList.forEach(function(song){
+        var newBlock = document.createElement('div');
+        newBlock.artist = song[1];
+        newBlock.title = song[2];
+        newBlock.year = song[3];
+        newBlock.style.backgroundColor = '#609dff'
+        //text nodes
+        var artist = document.createTextNode("Artist: " + song[1]  + '\n');
+        var title = document.createTextNode("Title: " + song[2] + '\n');
+        var year = document.createTextNode("Year: " + song[3] + '\n');
+
+        newBlock.addEventListener("mouseover", hiLight);
+        newBlock.addEventListener("mouseleave", turnBlack);
+        newBlock.addEventListener("click", removeFromLibrary);//function to remove songs to user library
+
+
+        //add elements to the array
+        newBlock.appendChild(artist);
+        newBlock.appendChild(title);
+        newBlock.appendChild(year);
+
+        document.getElementById("userSongs").appendChild(newBlock);
+
+      });
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+}
+
+function removeFromLibrary() {
+  this.innerHTML = "";
+  var user = {};
+  user["artist"] = this.artist;
+  user["title"] = this.title;
+  user["year"] = this.year;
+  user["mode"] = 'removeSong';
+  var fetchOptions = {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(user)
+  };
+  var url = "http://localhost:3000";
+  fetch(url, fetchOptions)
+    .then(checkStatus)
+    .then(function(responseText) {
+      if (responseText == "Notlogin") {
+        window.location.href = './index.html';
+      }
+      console.log(responseText);
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+}
 
   // returns the response text if the status is in the 200s
   // otherwise rejects the promise with a message including the status
