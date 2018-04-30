@@ -2,8 +2,18 @@
 tom:Sublime:40oz to Freedom:1996
 
 tom:Dave Matthews:#40:1999
-tom:Dave Matthews:#41:1996
 
 
 
 
+
+jim:Sublime:40oz to Freedom:1996
+jim:Dave Matthews:#40:1999
+jim:Violent Femmes:American Music:1991
+
+bob:Dave Matthews:#41:1996
+bob:Sublime:40oz to Freedom:1996
+
+bob:Dave Matthews:#40:1999
+bob:Dave Matthews:Stay or Leave:2003
+bob:Violent Femmes:American Music:1991

@@ -123,3 +123,13 @@ button {
   font-size: 16px;
   font-weight: bold;
 }
+
+.top {
+  float: right;
+  color: white;
+  padding-right: 3%;
+}
+
+#search {
+  padding-right: 10%;
+}
